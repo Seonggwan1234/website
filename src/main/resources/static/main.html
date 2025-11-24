@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 서비스</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">MyService</div>
+    <ul class="nav-links">
+        <li><a href="#">홈</a></li>
+        <li><a href="#">서비스 소개</a></li>
+        <li><a href="#">고객 지원</a></li>
+    </ul>
+
+    <div class="user-menu" id="guest-menu">
+        <button class="logout-btn" onclick="location.href='index.html'">로그인 / 회원가입</button>
+    </div>
+
+    <div class="user-menu" id="user-menu" style="display: none;">
+        <span>환영합니다, <strong id="username-display">사용자</strong>님!</span>
+        <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
+    </div>
+</nav>
+
+<div class="main-container">
+    <header class="welcome-section">
+        <h1>오늘의 할 일을 확인해보세요</h1>
+        <p>로그인하시면 더 많은 기능을 사용할 수 있습니다.</p>
+    </header>
+
+    <div class="card-grid">
+        <div class="card">
+            <i class="fas fa-chart-line"></i>
+            <h3>활동 내역</h3>
+            <p>지난달의 활동 로그를 확인합니다.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-cog"></i>
+            <h3>설정</h3>
+            <p>시스템 환경설정을 변경합니다.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-envelope"></i>
+            <h3>메시지</h3>
+            <p>새로운 알림이 3건 있습니다.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        // 저장된 로그인 정보 가져오기
+        const isLoggedIn = localStorage.getItem('isLogin');
+        const storedName = localStorage.getItem('username');
+
+        const guestMenu = document.getElementById('guest-menu');
+        const userMenu = document.getElementById('user-menu');
+        const nameDisplay = document.getElementById('username-display');
+
+        if (isLoggedIn === 'true') {
+            // 로그인 상태일 때
+            guestMenu.style.display = 'none';
+            userMenu.style.display = 'flex';
+
+            // 이름 표시 (없으면 '고객'으로 표시)
+            if (storedName) {
+                nameDisplay.innerText = storedName;
+            } else {
+                nameDisplay.innerText = "고객";
+            }
+        } else {
+            // 비로그인 상태일 때
+            guestMenu.style.display = 'flex';
+            userMenu.style.display = 'none';
+        }
+    }
+
+    // 로그아웃 처리
+    function handleLogout() {
+        localStorage.removeItem('isLogin'); // 로그인 기록 삭제
+        localStorage.removeItem('username'); // 이름 기록 삭제
+        alert('로그아웃 되었습니다.');
+        location.reload(); // 새로고침해서 상태 반영
+    }
+</script>
+</body>
+</html>
