@@ -3,8 +3,10 @@ package web.website.controller;
 import web.website.domain.User;
 import web.website.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.servlet.ModelAndView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.Map;
 
@@ -14,6 +16,11 @@ import java.util.Map;
 public class UserController {
 
     private final UserRepository userRepository;
+
+    @GetMapping("/")
+    public ModelAndView home() {
+        return new ModelAndView("redirect:/login.html");
+    }
 
     // 1. 회원가입 API
     @PostMapping("/signup")
