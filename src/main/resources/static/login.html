@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 & 회원가입</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+        <form action="#">
+            <h1>회원가입</h1>
+            <div class="social-container">
+                <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>또는 아이디로 가입하기</span>
+            <input type="text" placeholder="이름 (Name)" required />
+            <input type="text" placeholder="아이디 (ID)" required />
+            <input type="password" placeholder="비밀번호 (Password)" required />
+            <button>가입하기</button>
+        </form>
+    </div>
+
+    <div class="form-container sign-in-container">
+        <form action="#">
+            <h1>로그인</h1>
+            <div class="social-container">
+                <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>또는 계정을 사용하기</span>
+            <input type="text" placeholder="아이디 (ID)" required />
+            <input type="password" placeholder="비밀번호 (Password)" required />
+            <a href="#">비밀번호를 잊으셨나요?</a>
+            <button>로그인</button>
+        </form>
+    </div>
+
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>돌아오셨군요!</h1>
+                <p>아이디가 있으신가요? 로그인하고 서비스를 이용해보세요.</p>
+                <button class="ghost" id="signIn">로그인 하러가기</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>안녕하세요!</h1>
+                <p>아직 아이디가 없으신가요? 가입하고 새로운 여정을 시작하세요.</p>
+                <button class="ghost" id="signUp">회원가입 하러가기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const container = document.getElementById('container');
+
+    // 패널 이동 애니메이션
+    signUpButton.addEventListener('click', () => {
+        container.classList.add("right-panel-active");
+    });
+
+    signInButton.addEventListener('click', () => {
+        container.classList.remove("right-panel-active");
+    });
+
+    // 1. 회원가입 로직 (이름, 아이디, 비번)
+    const signUpForm = document.querySelector('.sign-up-container form');
+    signUpForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const inputs = signUpForm.querySelectorAll('input');
+        const name = inputs[0].value;
+        const userId = inputs[1].value; // 아이디
+        const password = inputs[2].value;
+
+        // 빈 값 체크
+        if (!name || !userId || !password) {
+            alert('모든 정보를 입력해주세요.');
+            return;
+        }
+
+        // 이름 저장 및 로그인 처리
+        localStorage.setItem('username', name);
+        localStorage.setItem('userId', userId); // 아이디도 저장 (나중에 쓸 수 있음)
+        localStorage.setItem('isLogin', 'true');
+
+        alert(name + '님 가입을 환영합니다!');
+        location.href = 'main.html';
+    });
+
+    // 2. 로그인 로직 (아이디, 비번)
+    const signInForm = document.querySelector('.sign-in-container form');
+    signInForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const inputs = signInForm.querySelectorAll('input');
+        const userId = inputs[0].value; // 아이디
+        const password = inputs[1].value;
+
+        // 빈 값 체크
+        if (!userId || !password) {
+            alert('아이디와 비밀번호를 입력해주세요.');
+            return;
+        }
+
+        // 만약 가입할 때 저장된 이름이 없으면, 입력한 '아이디'를 이름처럼 사용
+        if(!localStorage.getItem('username')) {
+            localStorage.setItem('username', userId);
+        }
+
+        localStorage.setItem('isLogin', 'true');
+        alert('로그인 되었습니다.');
+        location.href = 'main.html';
+    });
+</script>
+
+</body>
+</html>
