@@ -63,7 +63,7 @@
     const signInButton = document.getElementById('signIn');
     const container = document.getElementById('container');
 
-    // 패널 이동 애니메이션
+    // 패널 이동 (애니메이션)
     signUpButton.addEventListener('click', () => {
         container.classList.add("right-panel-active");
     });
@@ -72,56 +72,72 @@
         container.classList.remove("right-panel-active");
     });
 
-    // 1. 회원가입 로직 (이름, 아이디, 비번)
+    // 1. 회원가입 요청 (백엔드로 전송)
     const signUpForm = document.querySelector('.sign-up-container form');
     signUpForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const inputs = signUpForm.querySelectorAll('input');
         const name = inputs[0].value;
-        const userId = inputs[1].value; // 아이디
+        const userId = inputs[1].value;
         const password = inputs[2].value;
 
-        // 빈 값 체크
-        if (!name || !userId || !password) {
-            alert('모든 정보를 입력해주세요.');
-            return;
-        }
+        // 서버로 보낼 데이터 뭉치기
+        const data = {
+            name: name,
+            userId: userId,
+            password: password
+        };
 
-        // 이름 저장 및 로그인 처리
-        localStorage.setItem('username', name);
-        localStorage.setItem('userId', userId); // 아이디도 저장 (나중에 쓸 수 있음)
-        localStorage.setItem('isLogin', 'true');
-
-        alert(name + '님 가입을 환영합니다!');
-        location.href = 'main.html';
+        // Fetch API로 자바 서버(/api/signup)에 전송
+        fetch('/api/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.text()) // 서버 응답 받기
+            .then(message => {
+                alert(message); // "회원가입 성공" 또는 "이미 존재하는..."
+                if (message === "회원가입 성공") {
+                    container.classList.remove("right-panel-active"); // 로그인 화면으로 이동
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 
-    // 2. 로그인 로직 (아이디, 비번)
+    // 2. 로그인 요청 (백엔드로 전송)
     const signInForm = document.querySelector('.sign-in-container form');
     signInForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const inputs = signInForm.querySelectorAll('input');
-        const userId = inputs[0].value; // 아이디
+        const userId = inputs[0].value;
         const password = inputs[1].value;
 
-        // 빈 값 체크
-        if (!userId || !password) {
-            alert('아이디와 비밀번호를 입력해주세요.');
-            return;
-        }
+        const data = {
+            userId: userId,
+            password: password
+        };
 
-        // 만약 가입할 때 저장된 이름이 없으면, 입력한 '아이디'를 이름처럼 사용
-        if(!localStorage.getItem('username')) {
-            localStorage.setItem('username', userId);
-        }
+        fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.text())
+            .then(message => {
+                if (message === "로그인 성공") {
+                    alert('로그인 되었습니다.');
+                    // 로컬스토리지에도 저장 (화면 유지용)
+                    localStorage.setItem('isLogin', 'true');
+                    localStorage.setItem('username', userId);
 
-        localStorage.setItem('isLogin', 'true');
-        alert('로그인 되었습니다.');
-        location.href = 'main.html';
+                    // 메인 페이지로 이동
+                    location.href = 'main.html';
+                } else {
+                    alert('아이디 또는 비밀번호가 틀렸습니다.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 </script>
-
-</body>
-</html>
