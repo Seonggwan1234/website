@@ -7,23 +7,24 @@ import org.springframework.web.servlet.ModelAndView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api") // 주소 앞에 무조건 /api 가 붙음
+// @RequestMapping("/api") <-- [삭제함] 이걸 지워야 루트 경로(/)를 잡을 수 있습니다.
 public class UserController {
 
     private final UserRepository userRepository;
 
+    // 1. 첫 접속 시(localhost:8080) -> main.html로 이동
     @GetMapping("/")
     public ModelAndView home() {
-        return new ModelAndView("redirect:/login.html");
+        // 로그인 안 한 사람은 main.html 로 가면 알아서 로그인 버튼이 보이니까 main으로 보냅니다.
+        return new ModelAndView("redirect:/main.html");
     }
 
-    // 1. 회원가입 API
-    @PostMapping("/signup")
+    // 2. 회원가입 API (주소에 /api를 직접 붙임)
+    @PostMapping("/api/signup")
     public String signup(@RequestBody Map<String, String> request) {
         String userId = request.get("userId");
 
@@ -41,8 +42,8 @@ public class UserController {
         return "회원가입 성공";
     }
 
-    // 2. 로그인 API
-    @PostMapping("/login")
+    // 3. 로그인 API (주소에 /api를 직접 붙임)
+    @PostMapping("/api/login")
     public String login(@RequestBody Map<String, String> request, HttpSession session) {
         String userId = request.get("userId");
         String password = request.get("password");
